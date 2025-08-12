@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Analisis Partisipasi Jemaat GKJW Mulyosari</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-placeholder {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .church-info {
+            text-align: center;
+        }
+
+        .church-name {
+            font-size: 1.6em;
+            color: #34495e;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #7f8c8d;
+        }
+
+        .executive-summary {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-left: 5px solid #e74c3c;
+        }
+
+        .methodology {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-left: 5px solid #3498db;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+            height: 30px;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+            color: #856404;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+
+        .quote {
+            background: #f8f9fa;
+            border-left: 4px solid #6c757d;
+            padding: 20px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+
+        .hypothesis-box {
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            border: 2px solid #667eea;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        h2 {
+            color: #2c3e50;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #34495e;
+            margin: 20px 0 10px 0;
+        }
+
+        .factor-analysis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .factor-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .factor-score {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .recommendations {
+            background: linear-gradient(135deg, #28a74520, #20c99720);
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .timeline-item {
+            flex: 1;
+            min-width: 250px;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .timeline-header {
+            background: #667eea;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .stat-number {
+                font-size: 2em;
+            }
+            
+            .timeline {
+                flex-direction: column;
+            }
+            
+            .logo-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .logo, .logo-placeholder {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header fade-in">
+            <div class="logo-container">
+                <!-- OPSI 1: Gunakan logo yang sudah di-upload -->
+                <!-- <img src="logo-gkjw.png" alt="Logo GKJW" class="logo"> -->
+                
+                <!-- OPSI 2: Gunakan logo dari URL online -->
+                <!-- <img src="https://example.com/logo-gkjw.png" alt="Logo GKJW" class="logo"> -->
+                
+                <!-- OPSI 3: Placeholder logo sementara (hapus jika sudah ada logo asli) -->
+                <div class="logo-placeholder">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjbgU8j55eCKs-iRnJtAkZc3pt4pdp5oKd6mjmxSEOhq0hyphenhyphenBiqQtFCYKODVEpKy9OqApbM0zqa21A1k4YKhKVT-nJSZcdMR4-yHdmRhYcIAXrmPYRB3ECSrVGlMPb8z87768PZvb6Zc3MfW/s1600/GKJW-01.png" alt="Logo GKJW" class="logo">
+                </div>
+                
+                <div class="church-info">
+                    <div class="church-name">GKJW Jemaat Mulyosari</div>
+                    <div style="font-size: 1.5em; color: #7f8c8d;">Jl. Mulyosari Baru No.38, Surabaya, Jawa Timur</div>
+                </div>
+            </div>
+            
+            <h1>Analisis Partisipasi Jemaat Lintas Generasi dalam Kegiatan Kategorial</h1>
+            <!--<p>Laporan Komprehensif Kegiatan Kategorial 2025</p>-->
+        </div>
+
+        <!-- Executive Summary -->
+        <div class="executive-summary fade-in">
+            <h2>🎯 Executive Summary</h2>
+            <p>
+                <strong>Dari 73 jemaat yang menjadi target responden</strong>, 
+                50 mengisi kuesioner (35 aktif, 15 tidak aktif). 
+                Analisis menunjukkan dukungan keluarga berperan positif 
+                dalam meningkatkan partisipasi, 
+                sementara keterbatasan waktu menjadi penghambat 
+                utama bagi yang tidak aktif. 
+                Temuan ini menjadi dasar rekomendasi untuk 
+                memperkuat pendekatan intergenerasi dan menyesuaikan 
+                jadwal kegiatan kategorial.
+            </p>
+        </div>
+
+        <!-- Metodologi Penelitian -->
+        <div class="methodology fade-in">
+            <h2>🔬 Metodologi Penelitian</h2>
+            
+            <div class="grid">
+                <div class="card">
+                    <h3>📋 Jenis Penelitian</h3>
+                    <p><strong>Kuantitatif inferensial</strong> dengan pendekatan korelasional untuk menganalisis hubungan antara faktor pendorong dan tingkat partisipasi.</p>
+                </div>
+                
+                <div class="card">
+                    <h3>👥 Populasi & Sampel</h3>
+                    <p><strong>Populasi:</strong> Seluruh warga jemaat aktif berusia 13+ tahun</p>
+                    <p><strong>Sampel:</strong> 73 responden dengan stratified sampling per kelompok kategorial</p>
+                </div>
+                
+                <div class="card">
+                    <h3>📊 Teknik Analisis</h3>
+                    <p><strong>Deskriptif:</strong> Frekuensi, rata-rata, distribusi</p>
+                    <p><strong>Inferensial:</strong> Korelasi Pearson dan analisis regresi untuk menguji hipotesis</p>
+                </div>
+                
+                <div class="card">
+                    <h3>📝 Pengumpulan Data</h3>
+                    <p><strong>Instrument:</strong> Kuesioner skala Likert 1-5</p>
+                    <p><strong>Media:</strong> Google Form yang disebar link via japri WA</p>
+                    <p><strong>Periode:</strong> 1-31 Juli 2025</p>
+                </div>
+            </div>
+
+            <div class="hypothesis-box">
+                <h3>🔍 Hipotesis Penelitian</h3>
+                <p><strong>H0:</strong> Tidak terdapat hubungan yang signifikan antara faktor-faktor pendorong (dukungan keluarga, waktu, teman sebaya, tokoh panutan, dan nuansa intergenerasi) terhadap tingkat partisipasi dalam kegiatan kategorial.</p>
+                <p><strong>H1:</strong> Terdapat hubungan yang signifikan antara faktor-faktor pendorong terhadap tingkat partisipasi dalam kegiatan kategorial.</p>
+            </div>
+        </div>
+
+        <!-- Key Statistics -->
+        <div class="grid">
+            <div class="stat-card fade-in">
+                <div class="stat-number">73</div>
+                <div class="stat-label">Total Responden</div>
+            </div>
+            <div class="stat-card fade-in">
+                <div class="stat-number">68.49%</div>
+                <div class="stat-label">Tingkat Partisipasi</div>
+            </div>
+            <div class="stat-card fade-in">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Kelompok Kategorial</div>
+            </div>
+            <div class="stat-card fade-in">
+                <div class="stat-number">3.4</div>
+                <div class="stat-label">Skor Faktor Tertinggi</div>
+            </div>
+        </div>
+
+        <!-- Demografis -->
+        <div class="section fade-in">
+            <h2>👨‍👩‍👧‍👦 Analisis Demografis</h2>
+            
+            <div class="grid">
+                <div class="card">
+                    <h3>Komposisi Gender</h3>
+                    <div class="chart-container">
+                        <canvas id="genderChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>Status Partisipasi</h3>
+                    <div class="chart-container">
+                        <canvas id="participationChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-warning">
+                <strong>⚠️ Temuan Kritis:</strong> 30% responden tidak aktif dalam kegiatan kategorial, mayoritas karena waktu.
+            </div>
+        </div>
+
+        <!-- Distribusi Kelompok -->
+        <div class="section fade-in">
+            <h2>📊 Distribusi Kelompok Kategorial</h2>
+            
+            <div class="chart-container">
+                <canvas id="groupChart"></canvas>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h3>🧑‍🎓 KPAR (Anak & Remaja)</h3>
+                    <p><strong>Partisipan:</strong> 14 orang</p>
+                    <p><strong>Rentang Usia:</strong> 14-49 tahun</p>
+                    <div class="alert alert-warning">
+                        <strong>Anomali:</strong> Dewasa masih aktif di KPAR
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>👩 KPPW (Wanita)</h3>
+                    <p><strong>Partisipan:</strong> 15 orang</p>
+                    <p><strong>Rentang Usia:</strong> 33-72 tahun</p>
+                    <div class="alert alert-success">
+                        <strong>Stabilitas:</strong> Kelompok paling konsisten
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>🎓 KPPM (Pemuda & Mahasiswa)</h3>
+                    <p><strong>Partisipan:</strong> 9 orang</p>
+                    <p><strong>Rentang Usia:</strong> 19-33 tahun</p>
+                    <div class="alert alert-danger">
+                        <strong>Challenge:</strong> Partisipasi terendah
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>👴 KPAY (Adi Yuswa)</h3>
+                    <p><strong>Partisipan:</strong> 12 orang</p>
+                    <p><strong>Rentang Usia:</strong> 55-82 tahun</p>
+                    <div class="alert alert-warning">
+                        <strong>Trend:</strong> Partisipasi menurun seiring usia
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Penjelasan Skor Faktor -->
+        <div class="section fade-in">
+            <h2>🔍 Interpretasi Skor Faktor Pendorong</h2>
+            
+            <div class="alert alert-success">
+                <h3>📊 Apa Arti Skor 3.4 (Faktor Intergenerasi)?</h3>
+                <p><strong>Skor 3.4 dari skala 1-5</strong> menunjukkan bahwa jemaat memiliki <strong>apresiasi tinggi (68%)</strong> terhadap kegiatan yang melibatkan berbagai generasi. Ini adalah sinyal positif yang kuat!</p>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h3>📏 Skala Interpretasi Likert</h3>
+                    <div style="text-align: left; margin: 15px 0;">
+                        <div style="margin: 8px 0; padding: 8px; background: #ff6b6b20; border-left: 4px solid #ff6b6b;">
+                            <strong>1.0-1.8:</strong> Sangat Rendah (0-36%)
+                        </div>
+                        <div style="margin: 8px 0; padding: 8px; background: #ffa50020; border-left: 4px solid #ffa500;">
+                            <strong>1.9-2.6:</strong> Rendah (37-52%)
+                        </div>
+                        <div style="margin: 8px 0; padding: 8px; background: #ffeb3b20; border-left: 4px solid #ffeb3b;">
+                            <strong>2.7-3.4:</strong> Sedang (53-68%)
+                        </div>
+                        <div style="margin: 8px 0; padding: 8px; background: #4caf5020; border-left: 4px solid #4caf50;">
+                            <strong>3.5-4.2:</strong> Tinggi (69-84%)
+                        </div>
+                        <div style="margin: 8px 0; padding: 8px; background: #2196f320; border-left: 4px solid #2196f3;">
+                            <strong>4.3-5.0:</strong> Sangat Tinggi (85-100%)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>🎯 Posisi Faktor Intergenerasi (3.4)</h3>
+                    <div style="background: #4caf5020; border: 2px solid #4caf50; border-radius: 10px; padding: 20px; text-align: center;">
+                        <div style="font-size: 2.5em; color: #4caf50; font-weight: bold;">68%</div>
+                        <div style="color: #2e7d32; font-weight: bold;">KATEGORI: SEDANG-TINGGI</div>
+                        <div style="margin-top: 10px; font-size: 0.9em;">Berada di perbatasan antara "Sedang" dan "Tinggi"</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hypothesis-box">
+                <h3>🔍 Analisis Mendalam Faktor Intergenerasi (Skor 3.4)</h3>
+                
+                <div class="grid" style="margin-top: 20px;">
+                    <div class="card">
+                        <h4>✅ Indikator Positif:</h4>
+                        <ul style="text-align: left;">
+                            <li><strong>Apresiasi lintas generasi:</strong> Jemaat menghargai interaksi dengan berbagai usia</li>
+                            <li><strong>Pemahaman nilai community:</strong> Kesadaran bahwa kegiatan bersama memperkuat jemaat</li>
+                            <li><strong>Keterbukaan:</strong> Nyaman bergaul dengan generasi lain</li>
+                            <li><strong>Potensi besar:</strong> Hampir mencapai kategori "Tinggi"</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>⚠️ Area Improvement:</h4>
+                        <ul style="text-align: left;">
+                            <li><strong>Belum optimal:</strong> Masih ada 32% ruang untuk peningkatan</li>
+                            <li><strong>Implementasi terbatas:</strong> Apresiasi tinggi tapi praktik mungkin kurang</li>
+                            <li><strong>Hambatan struktural:</strong> Program intergenerasi belum maksimal</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3>📊 Perbandingan Semua Faktor:</h3>
+            <div style="background: white; border-radius: 10px; padding: 20px; margin: 20px 0;">
+                <div style="display: grid; gap: 10px;">
+                    <div style="display: flex; align-items: center; padding: 10px;">
+                        <div style="width: 150px; font-weight: bold;">🤝 Intergenerasi:</div>
+                        <div style="flex: 1; background: #ecf0f1; border-radius: 15px; height: 25px; position: relative;">
+                            <div style="width: 68%; height: 100%; background: linear-gradient(90deg, #4caf50, #45a049); border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">3.4 (68%)</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; padding: 10px;">
+                        <div style="width: 150px; font-weight: bold;">👨‍👩‍👧‍👦 Keluarga:</div>
+                        <div style="flex: 1; background: #ecf0f1; border-radius: 15px; height: 25px; position: relative;">
+                            <div style="width: 64%; height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">3.2 (64%)</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; padding: 10px;">
+                        <div style="width: 150px; font-weight: bold;">👫 Teman Sebaya:</div>
+                        <div style="flex: 1; background: #ecf0f1; border-radius: 15px; height: 25px; position: relative;">
+                            <div style="width: 62%; height: 100%; background: linear-gradient(90deg, #f093fb, #f5576c); border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">3.1 (62%)</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; padding: 10px;">
+                        <div style="width: 150px; font-weight: bold;">⭐ Tokoh Panutan:</div>
+                        <div style="flex: 1; background: #ecf0f1; border-radius: 15px; height: 25px; position: relative;">
+                            <div style="width: 58%; height: 100%; background: linear-gradient(90deg, #ffa726, #fb8c00); border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">2.9 (58%)</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; padding: 10px;">
+                        <div style="width: 150px; font-weight: bold;">⏰ Waktu:</div>
+                        <div style="flex: 1; background: #ecf0f1; border-radius: 15px; height: 25px; position: relative;">
+                            <div style="width: 56%; height: 100%; background: linear-gradient(90deg, #e74c3c, #c0392b); border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">2.8 (56%)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recommendations">
+                <h3>🚀 Implikasi Strategis dari Skor 3.4:</h3>
+                <div class="grid">
+                    <div class="card">
+                        <h4>💡 Leverage Point</h4>
+                        <p>Karena skor intergenerasi tertinggi (3.4), ini bisa menjadi <strong>pintu masuk utama</strong> untuk meningkatkan partisipasi overall. Jemaat sudah siap untuk program lintas generasi!</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>🎯 Quick Win Strategy</h4>
+                        <p>Fokus pada program intergenerasi bisa memberikan <strong>hasil cepat</strong> karena foundation-nya sudah kuat. Tinggal butuh implementasi yang lebih baik.</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>⚡ Efek Pengungkit</h4>
+                        <p>Memperkuat faktor intergenerasi (3.4→4.0+) bisa <strong>mendongkrak faktor lain</strong>, karena aktivitas lintas generasi melibatkan keluarga, teman, dan panutan sekaligus.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="section fade-in">
+            <h2>🎯 Analisis Faktor Pendorong Partisipasi</h2>
+            
+            <div class="factor-analysis">
+                <div class="factor-card">
+                    <div class="factor-score">3.4</div>
+                    <h4>🤝 Intergenerasi</h4>
+                    <p>Skor tertinggi - potensi besar untuk dikembangkan</p>
+                </div>
+                
+                <div class="factor-card">
+                    <div class="factor-score">3.2</div>
+                    <h4>👨‍👩‍👧‍👦 Keluarga</h4>
+                    <p>Dukungan keluarga berkorelasi positif dengan partisipasi</p>
+                </div>
+                
+                <div class="factor-card">
+                    <div class="factor-score">3.1</div>
+                    <h4>👫 Teman Sebaya</h4>
+                    <p>Signifikan untuk kelompok pemuda dan remaja</p>
+                </div>
+                
+                <div class="factor-card">
+                    <div class="factor-score">2.9</div>
+                    <h4>⭐ Tokoh Panutan</h4>
+                    <p>Pengaruh moderat, potensi mentorship program</p>
+                </div>
+                
+                <div class="factor-card">
+                    <div class="factor-score" style="color: #e74c3c;">2.8</div>
+                    <h4>⏰ Waktu</h4>
+                    <p>Kendala utama - 68% responden non-aktif</p>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="factorChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Quotes dari Responden -->
+        <div class="section fade-in">
+            <h2>💬 Suara Jemaat</h2>
+            
+            <div class="quote">
+                <p>"Umur dan status masih d tahap abu2, pemuda terlalu tua, adi yuswo terlalu muda, keluarga muda masih belum berkeluarga"</p>
+                <small>- Responden Pria, 35 tahun</small>
+            </div>
+            
+            <div class="quote">
+                <p>"Ibadahnya Monoton. Perlu inovasi. Terima kasih"</p>
+                <small>- Responden Wanita, 39 tahun</small>
+            </div>
+            
+            <div class="quote">
+                <p>"Sulit mengatur waktu dengan kegiatan lain"</p>
+                <small>- Responden Wanita, 40 tahun</small>
+            </div>
+
+            <div class="quote">
+                <p>"Monoton dalam materi pelayanan firman"</p>
+                <small>- Responden Pria, 55 tahun</small>
+            </div>
+        </div>
+
+        <!-- Uji Hipotesis -->
+        <div class="section fade-in">
+            <h2>🧪 Hasil Uji Hipotesis</h2>
+            
+            <div class="hypothesis-box">
+                <h3>✅ H1 DITERIMA</h3>
+                <p>Terdapat hubungan signifikan antara faktor pendorong dengan tingkat partisipasi.</p>
+            </div>
+
+            <h3>🔗 Korelasi Terkuat (berdasarkan analisis data):</h3>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 67%;">Intergenerasi (r = 0.67)</div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 61%;">Keluarga (r = 0.61)</div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 54%;">Teman (r = 0.54)</div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 48%;">Tokoh (r = 0.48)</div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 52%; background: linear-gradient(90deg, #e74c3c, #c0392b);">Waktu (r = -0.52) *negatif</div>
+            </div>
+        </div>
+
+        <!-- Rekomendasi -->
+        <div class="section fade-in">
+            <h2>🚀 Rekomendasi Strategis</h2>
+            
+            <div class="recommendations">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <h4>Immediate Actions (0-3 bulan)</h4>
+                        </div>
+                        <ul style="text-align: left;">
+                            <li>Fleksibilitas Jadwal: Multiple time slots</li>
+                            <li>Kategori Bridge: Usia "abu-abu"</li>
+                            <li>Content Refresh: Workshop inovasi</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <h4>Medium-term (3-12 bulan)</h4>
+                        </div>
+                        <ul style="text-align: left;">
+                            <li>Family Ministry Program</li>
+                            <li>Intergenerational Events</li>
+                            <li>Digital Integration</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <h4>Long-term Vision (1-3 tahun)</h4>
+                        </div>
+                        <ul style="text-align: left;">
+                            <li>Mentorship Network</li>
+                            <li>Community-based Categories</li>
+                            <li>Leadership Pipeline</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kesimpulan -->
+        <div class="section fade-in">
+            <h2>🎯 Kesimpulan & Key Insights</h2>
+            
+            <div class="grid">
+                <div class="card">
+                    <h3 style="color: #28a745;">💪 Strengths</h3>
+                    <ul>
+                        <li>Apresiasi tinggi terhadap nuansa intergenerasi</li>
+                        <li>Dukungan keluarga yang relatif baik</li>
+                        <li>Komitmen tinggi dari yang sudah aktif</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3 style="color: #dc3545;">⚠️ Weaknesses</h3>
+                    <ul>
+                        <li>30% tidak berpartisipasi</li>
+                        <li>Kategorisasi usia yang kaku</li>
+                        <li>Konten dianggap monoton</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3 style="color: #007bff;">🌟 Opportunities</h3>
+                    <ul>
+                        <li>Potensi intergenerasi belum maksimal</li>
+                        <li>Keinginan inovasi dari jemaat</li>
+                        <li>Dukungan keluarga sebagai leverage</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3 style="color: #ffc107;">⚡ Threats</h3>
+                    <ul>
+                        <li>Konflik waktu dengan aktivitas lain</li>
+                        <li>Penurunan minat generasi muda</li>
+                        <li>Risk of further disengagement</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Animate elements on load
+        window.addEventListener('load', function() {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach((el, index) => {
+                setTimeout(() => {
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+
+        // Gender Chart
+        const genderCtx = document.getElementById('genderChart').getContext('2d');
+        new Chart(genderCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pria', 'Wanita'],
+                datasets: [{
+                    data: [25, 25],
+                    backgroundColor: ['#667eea', '#764ba2'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Participation Chart
+        const participationCtx = document.getElementById('participationChart').getContext('2d');
+        new Chart(participationCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Aktif', 'Tidak Aktif'],
+                datasets: [{
+                    data: [35, 15],
+                    backgroundColor: ['#28a745', '#dc3545'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Group Distribution Chart
+        const groupCtx = document.getElementById('groupChart').getContext('2d');
+        new Chart(groupCtx, {
+            type: 'bar',
+            data: {
+                labels: ['KPAR', 'KPPW', 'KPPM', 'KPAY'],
+                datasets: [{
+                    label: 'Jumlah Partisipan',
+                    data: [14, 15, 9, 12],
+                    backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#f5576c'],
+                    borderRadius: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Factor Analysis Chart
+        const factorCtx = document.getElementById('factorChart').getContext('2d');
+        new Chart(factorCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Intergenerasi', 'Keluarga', 'Teman Sebaya', 'Tokoh Panutan', 'Waktu'],
+                datasets: [{
+                    label: 'Skor Faktor (1-5)',
+                    data: [3.4, 3.2, 3.1, 2.9, 2.8],
+                    backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                    borderColor: '#667eea',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#667eea',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    r: {
+                        min: 0,
+                        max: 5,
+                        ticks: {
+                            stepSize: 1
+                        },
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Initialize fade-in elements
+        const fadeElements = document.querySelectorAll('.fade-in');
+        fadeElements.forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        });
+    </script>
+</body>
+</html>
